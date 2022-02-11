@@ -27,9 +27,9 @@ namespace EcoRebalanced
             );
         }
 
-        public static SortedDictionary<string, int> getAllUserItems(User user, string tagFilter)
+        public static Dictionary<Item, int> getAllUserItems(User user, string tagFilter)
         {
-            SortedDictionary<string, int> itemTotals = new SortedDictionary<string, int>();
+            Dictionary<Item, int> itemTotals = new Dictionary<Item, int>();
             foreach (StorageComponent storage in getOwnedComponents<StorageComponent>(user))
             {
                 foreach (ItemStack stack in storage.Inventory.NonEmptyStacks)
@@ -37,10 +37,10 @@ namespace EcoRebalanced
                     if (tagFilter != "ALL" && !stack.Item.TagNames().Contains(tagFilter)) continue;
 
                     int total;
-                    bool contains = itemTotals.TryGetValue(stack.DisplayName(), out total);
+                    bool contains = itemTotals.TryGetValue(stack.Item, out total);
                     if (!contains) total = 0;
 
-                    itemTotals[stack.DisplayName()] = total + stack.Quantity;
+                    itemTotals[stack.Item] = total + stack.Quantity;
                 }
             }
 
@@ -49,28 +49,36 @@ namespace EcoRebalanced
 
         // Subtracts some amount of some item. If there was less items than wanted to be subtracted the remainder is returned.
         // If stopAtZero is true then the item amount will not go into the negative.
-        public static int subtractFromItem(IDictionary<string, int> items, string itemName, int amountToSubtract, bool stopAtZero)
+        public static int subtractFromDictionaryValue<T>(IDictionary<T, int> dict, T key, int amountToSubtract, bool stopAtZero)
         {
             int itemAmount;
-            bool contains = items.TryGetValue(itemName, out itemAmount);
+            bool contains = dict.TryGetValue(key, out itemAmount);
             if (contains)
             {
                 if (stopAtZero && itemAmount < amountToSubtract)
                 {
-                    items[itemName] = 0;
+                    dict[key] = 0;
                 }
                 else
                 {
-                    items[itemName] = itemAmount - amountToSubtract;
+                    dict[key] = itemAmount - amountToSubtract;
                 }
             }
             else if (!stopAtZero)
             {
-                items.Add(itemName, -amountToSubtract);
+                dict.Add(key, -amountToSubtract);
                 itemAmount = 0;
             }
 
             return (itemAmount > amountToSubtract ? 0 : amountToSubtract - itemAmount);
+        }
+    }
+
+    public class ItemPairComparer : IComparer<KeyValuePair<Item, int>>
+    {
+        public int Compare(KeyValuePair<Item, int> a, KeyValuePair<Item, int> b)
+        {
+            return a.Key.DisplayName.CompareTo(b.Key.DisplayName);
         }
     }
 }
