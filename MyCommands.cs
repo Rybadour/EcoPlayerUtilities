@@ -14,23 +14,33 @@ namespace EcoRebalanced
 {
     public class MyCommands : IChatCommandHandler
     {
-        [ChatCommand("List all items in your storage. Can filter by tag with 'tagFilter'.", "my-items", ChatAuthorizationLevel.User)]
-        public static void MyItems(User user, string tagFilter = "ALL")
+        [ChatCommand(
+            "List all items in your storage. Can filter by tag with the 'tagFilter' option. By default lists items in your backpack" +
+            "but can be disabled with the 'includeBackpack' option.",
+            "my-items",
+            ChatAuthorizationLevel.User)
+        ]
+        public static void MyItems(User user, string tagFilter = "ALL", bool includeBackpack = true)
         {
             if (tagFilter == null) tagFilter = "ALL";
 
-            Dictionary<Item, int> itemTotals = Utils.getAllUserItems(user, tagFilter);
+            Dictionary<Item, int> itemTotals = Utils.getAllUserItems(user, tagFilter, includeBackpack);
             var sortedTotals = itemTotals.OrderBy(i => i, new ItemPairComparer());
 
             string listContents = "";
             foreach (var kv in sortedTotals)
             {
-                listContents += kv.Key.UILinkAndNumber(kv.Value) + "\n";
+                listContents += $"{kv.Key.MarkedUpName} - {kv.Value}\n";
             }
+
+            string title = "List of Your Items" + (tagFilter == "ALL" ? "" : " (" + tagFilter + ")");
+            user.MsgLoc($"{title}");
             ChatBaseExtended.CBInfoPane(
-                "List of Your Items" + (tagFilter == "ALL" ? "" : " (" + tagFilter + ")"),
+                title,
                 listContents,
-                "list-items"
+                "list-items",
+                user,
+                true
             );
         }
 
@@ -38,7 +48,7 @@ namespace EcoRebalanced
         public static void MyNeededItems(User user)
         {
             string listContents = "";
-            Dictionary<Item, int> itemsRemaining = Utils.getAllUserItems(user, "ALL");
+            Dictionary<Item, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
             Dictionary<Tag, int> tagsRemaining = new Dictionary<Tag, int>();
 
             foreach (CraftingComponent table in Utils.getOwnedComponents<CraftingComponent>(user))
@@ -56,7 +66,6 @@ namespace EcoRebalanced
                             foreach (Type type in tag.TaggedTypes())
                             {
                                 Item item = Item.Get(type);
-                                //user.MsgLoc($"{(item == null ? "Cannot find tagged item for " + type.FullName : "Found item " + item.DisplayName)}\n");
                                 if (item != null)
                                     amountNeeded = Utils.subtractFromDictionaryValue(itemsRemaining, item, amountNeeded, true);
 
@@ -84,22 +93,24 @@ namespace EcoRebalanced
             foreach (var kv in sorted)
             {
                 if (kv.Value < 0)
-                    listContents += $"{kv.Key.UILinkAndNumber(kv.Value * -1)}\n";
+                    listContents += $"{kv.Key.MarkedUpName} - {(kv.Value * -1)}\n";
             }
             foreach (var kv in tagsRemaining)
             {
                 if (kv.Value < 0)
-                    listContents += $"{kv.Key.UILinkAndNumber(kv.Value * -1)}\n";
+                    listContents += $"{kv.Key.MarkedUpName} - {(kv.Value * -1)}\n";
             }
 
+            string title = "Your Projects are Missing These Items";
+            user.MsgLoc($"{title}");
             ChatBase.Send(new ChatBase.InfoPane(
-                "Your Projects are Missing These Items",
+                title,
                 listContents,
                 "needed-items",
                 user,
                 ChatBase.PanelType.InfoPanel,
                 false,
-                false
+                true
             ));
         }
     }

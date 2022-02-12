@@ -13,35 +13,35 @@ namespace EcoRebalanced
     {
         public static IEnumerable<T> getOwnedComponents<T>(User user)
         {
-            /* *
-            foreach (Deed deed in user.GetAllProperty())
-            {
-                foreach (WorldObject wo in deed.GetObjectsCreatedByUser(user))
-                {
-                    StorageComponent storage = wo.GetComponent<StorageComponent>();
-            /* */
             return user.GetAllProperty().SelectMany(p =>
                 p.GetObjectsCreatedByUser(user)
-                    .Select(o => o.GetComponent<T>())
+                    .SelectMany(o => o.GetComponents<T>())
                     .Where(c => c != null)
             );
         }
 
-        public static Dictionary<Item, int> getAllUserItems(User user, string tagFilter)
+        public static Dictionary<Item, int> getAllUserItems(User user, string tagFilter, bool includeBackpack)
         {
             Dictionary<Item, int> itemTotals = new Dictionary<Item, int>();
-            foreach (StorageComponent storage in getOwnedComponents<StorageComponent>(user))
+            IEnumerable<ItemStack> stacks = getOwnedComponents<StorageComponent>(user)
+                .SelectMany(s => s.Inventory.NonEmptyStacks);
+            if (includeBackpack)
             {
-                foreach (ItemStack stack in storage.Inventory.NonEmptyStacks)
-                {
-                    if (tagFilter != "ALL" && !stack.Item.TagNames().Contains(tagFilter)) continue;
+                stacks = stacks.Concat(user.Inventory.Backpack.NonEmptyStacks)
+                    .Concat(user.Inventory.Carried.NonEmptyStacks)
+                    .Concat(user.Inventory.Toolbar.NonEmptyStacks);
+            }
 
-                    int total;
-                    bool contains = itemTotals.TryGetValue(stack.Item, out total);
-                    if (!contains) total = 0;
 
-                    itemTotals[stack.Item] = total + stack.Quantity;
-                }
+            foreach (ItemStack stack in stacks)
+            {
+                if (tagFilter != "ALL" && !stack.Item.TagNames().Contains(tagFilter)) continue;
+
+                int total;
+                bool contains = itemTotals.TryGetValue(stack.Item, out total);
+                if (!contains) total = 0;
+
+                itemTotals[stack.Item] = total + stack.Quantity;
             }
 
             return itemTotals;
