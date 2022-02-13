@@ -13,11 +13,9 @@ namespace EcoRebalanced
     {
         public static IEnumerable<T> getOwnedComponents<T>(User user)
         {
-            return user.GetAllProperty().SelectMany(p =>
-                p.GetObjectsCreatedByUser(user)
-                    .SelectMany(o => o.GetComponents<T>())
-                    .Where(c => c != null)
-            );
+            return WorldObjectManager.GetOwnedBy(user)
+                .SelectMany(wo => wo.GetComponents<T>())
+                .Where(c => c != null);
         }
 
         public static Dictionary<Item, int> getAllUserItems(User user, string tagFilter, bool includeBackpack)
@@ -31,7 +29,6 @@ namespace EcoRebalanced
                     .Concat(user.Inventory.Carried.NonEmptyStacks)
                     .Concat(user.Inventory.Toolbar.NonEmptyStacks);
             }
-
 
             foreach (ItemStack stack in stacks)
             {
