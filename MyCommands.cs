@@ -24,13 +24,14 @@ namespace EcoRebalanced
         {
             if (tagFilter == null) tagFilter = "ALL";
 
-            Dictionary<Item, int> itemTotals = Utils.getAllUserItems(user, tagFilter, includeBackpack);
+            Dictionary<int, int> itemTotals = Utils.getAllUserItems(user, tagFilter, includeBackpack);
             var sortedTotals = itemTotals.OrderBy(i => i, new ItemPairComparer());
 
             string listContents = "";
             foreach (var kv in sortedTotals)
             {
-                listContents += $"{kv.Key.MarkedUpName} - {kv.Value}\n";
+                Item item = Item.Get(kv.Key);
+                listContents += $"{item.MarkedUpName} - {kv.Value}\n";
             }
 
             string title = "List of Your Items" + (tagFilter == "ALL" ? "" : " (" + tagFilter + ")");
@@ -48,57 +49,67 @@ namespace EcoRebalanced
         public static void MyNeededItems(User user)
         {
             string listContents = "";
-            Dictionary<Item, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
-            Dictionary<Tag, int> tagsRemaining = new Dictionary<Tag, int>();
+            Dictionary<int, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
+            Dictionary<string, int> tagsRemaining = new Dictionary<string, int>();
 
-            foreach (CraftingComponent table in Utils.getOwnedComponents<CraftingComponent>(user))
+            IEnumerable<WorkOrder> workOrders = Utils.getOwnedComponents<CraftingComponent>(user)
+                .SelectMany(c => c.WorkOrders.AsEnumerable());
+            foreach (WorkOrder wo in workOrders)
             {
-                foreach (WorkOrder order in table.WorkOrders.AsEnumerable())
+                foreach (CraftingElement ce in wo.Recipe.Product)
                 {
-                    foreach (IStack stack in order.IngredientsRemaningInAllIterations())
+                    Utils.addToDictionaryValue(itemsRemaining, ce.Item.TypeID, (int)ce.Quantity.GetBaseValue * wo.UncraftedQuantity);
+                }
+
+                foreach (IStack stack in wo.IngredientsRemaningInAllIterations())
+                {
+                    int amountNeeded = stack.Quantity;
+                    Tag tag = TagManager.Tag(stack.StackObject.Name);
+                    if (tag != null)
                     {
-                        int amountNeeded = stack.Quantity;
-                        Tag tag = TagManager.Tag(stack.StackObject.Name);
-                        if (tag != null)
-                        {
-                            // Iterate over items in tag and subtract from items in order until amountNeeded is exhausted
-                            // or all items were iterated through.
-                            foreach (Type type in tag.TaggedTypes())
-                            {
-                                Item item = Item.Get(type);
-                                if (item != null)
-                                    amountNeeded = Utils.subtractFromDictionaryValue(itemsRemaining, item, amountNeeded, true);
-
-                                if (amountNeeded == 0) break;
-                            }
-
-                            if (amountNeeded > 0)
-                            {
-                                Utils.subtractFromDictionaryValue(tagsRemaining, tag, amountNeeded, false);
-                            }
-                        }
+                        Utils.subtractFromDictionaryValue(tagsRemaining, tag.Name, amountNeeded, false);
+                    }
+                    else
+                    {
+                        Item item = Item.Get(stack.StackObject.Name);
+                        if (item != null)
+                            Utils.subtractFromDictionaryValue(itemsRemaining, item.TypeID, amountNeeded, false);
                         else
-                        {
-                            Item item = Item.Get(stack.StackObject.Name);
-                            if (item != null)
-                                Utils.subtractFromDictionaryValue(itemsRemaining, item, amountNeeded, false);
-                            else
-                                user.MsgLoc($"{stack.StackObject.Name} is not an item?");
-                        }
+                            user.MsgLoc($"{stack.StackObject.Name} is not an item?");
                     }
                 }
+            }
+
+            foreach (var kv in tagsRemaining)
+            {
+                int amountNeeded = kv.Value * -1;
+                Tag tag = TagManager.Tag(kv.Key);
+                // Iterate over items in tag and subtract from items in order until amountNeeded is exhausted
+                // or all items were iterated through.
+                foreach (Type type in tag.TaggedTypes())
+                {
+                    Item item = Item.Get(type);
+                    if (item != null)
+                        amountNeeded = Utils.subtractFromDictionaryValue(itemsRemaining, item.TypeID, amountNeeded, true);
+
+                    if (amountNeeded == 0) break;
+                }
+
+                tagsRemaining[kv.Key] = amountNeeded * -1;
             }
 
             var sorted = itemsRemaining.OrderBy(i => i, new ItemPairComparer());
             foreach (var kv in sorted)
             {
+                Item item = Item.Get(kv.Key);
                 if (kv.Value < 0)
-                    listContents += $"{kv.Key.MarkedUpName} - {(kv.Value * -1)}\n";
+                    listContents += $"{item.MarkedUpName} - {(kv.Value * -1)}\n";
             }
             foreach (var kv in tagsRemaining)
             {
+                Tag tag = TagManager.Tag(kv.Key);
                 if (kv.Value < 0)
-                    listContents += $"{kv.Key.MarkedUpName} - {(kv.Value * -1)}\n";
+                    listContents += $"{tag.MarkedUpName} - {(kv.Value * -1)}\n";
             }
 
             string title = "Your Projects are Missing These Items";

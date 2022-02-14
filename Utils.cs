@@ -18,9 +18,9 @@ namespace EcoRebalanced
                 .Where(c => c != null);
         }
 
-        public static Dictionary<Item, int> getAllUserItems(User user, string tagFilter, bool includeBackpack)
+        public static Dictionary<int, int> getAllUserItems(User user, string tagFilter, bool includeBackpack)
         {
-            Dictionary<Item, int> itemTotals = new Dictionary<Item, int>();
+            Dictionary<int, int> itemTotals = new Dictionary<int, int>();
             IEnumerable<ItemStack> stacks = getOwnedComponents<StorageComponent>(user)
                 .SelectMany(s => s.Inventory.NonEmptyStacks);
             if (includeBackpack)
@@ -35,13 +35,23 @@ namespace EcoRebalanced
                 if (tagFilter != "ALL" && !stack.Item.TagNames().Contains(tagFilter)) continue;
 
                 int total;
-                bool contains = itemTotals.TryGetValue(stack.Item, out total);
+                bool contains = itemTotals.TryGetValue(stack.Item.TypeID, out total);
                 if (!contains) total = 0;
 
-                itemTotals[stack.Item] = total + stack.Quantity;
+                itemTotals[stack.Item.TypeID] = total + stack.Quantity;
             }
 
             return itemTotals;
+        }
+
+        public static void addToDictionaryValue<T>(IDictionary<T, int> dict, T key, int amount)
+        {
+            int itemAmount;
+            bool contains = dict.TryGetValue(key, out itemAmount);
+            if (contains)
+                dict[key] = itemAmount + amount;
+            else
+                dict.Add(key, amount);
         }
 
         // Subtracts some amount of some item. If there was less items than wanted to be subtracted the remainder is returned.
@@ -71,11 +81,13 @@ namespace EcoRebalanced
         }
     }
 
-    public class ItemPairComparer : IComparer<KeyValuePair<Item, int>>
+    public class ItemPairComparer : IComparer<KeyValuePair<int, int>>
     {
-        public int Compare(KeyValuePair<Item, int> a, KeyValuePair<Item, int> b)
+        public int Compare(KeyValuePair<int, int> a, KeyValuePair<int, int> b)
         {
-            return a.Key.DisplayName.CompareTo(b.Key.DisplayName);
+            Item itemA = Item.Get(a.Key);
+            Item itemB = Item.Get(b.Key);
+            return itemA.DisplayName.CompareTo(itemB.DisplayName);
         }
     }
 }
