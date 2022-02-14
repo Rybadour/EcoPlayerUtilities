@@ -64,20 +64,26 @@ namespace EcoRebalanced
             {
                 if (stopAtZero && itemAmount < amountToSubtract)
                 {
-                    dict[key] = 0;
+                    if (itemAmount > 0)
+                    {
+                        dict[key] = 0;
+                        return amountToSubtract - itemAmount;
+                    }
+                    return amountToSubtract;
                 }
-                else
-                {
-                    dict[key] = itemAmount - amountToSubtract;
-                }
+
+                dict[key] = itemAmount - amountToSubtract;
+                return 0;
             }
             else if (!stopAtZero)
             {
                 dict.Add(key, -amountToSubtract);
-                itemAmount = 0;
+                return 0;
             }
-
-            return (itemAmount > amountToSubtract ? 0 : amountToSubtract - itemAmount);
+            else
+            {
+                return amountToSubtract;
+            }
         }
     }
 

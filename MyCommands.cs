@@ -45,7 +45,7 @@ namespace EcoRebalanced
             );
         }
 
-        [ChatCommand("List items needed by current projects", "my-needed-items", ChatAuthorizationLevel.User)]
+        [ChatCommand("List items needed by queued projects", "shopping-list", ChatAuthorizationLevel.User)]
         public static void MyNeededItems(User user)
         {
             string listContents = "";
@@ -117,7 +117,7 @@ namespace EcoRebalanced
             ChatBase.Send(new ChatBase.InfoPane(
                 title,
                 listContents,
-                "needed-items",
+                "shopping-list",
                 user,
                 ChatBase.PanelType.InfoPanel,
                 false,
