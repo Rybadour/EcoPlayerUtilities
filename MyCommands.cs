@@ -17,8 +17,8 @@ namespace EcoRebalanced
     {
         [ChatCommand(
             "items",
-            ChatAuthorizationLevel.User)
-        ]
+            ChatAuthorizationLevel.User
+        )]
         public static void Items() { }
 
         [ChatSubCommand(
