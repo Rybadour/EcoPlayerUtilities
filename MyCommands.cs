@@ -15,12 +15,18 @@ namespace EcoRebalanced
     public class MyCommands : IChatCommandHandler
     {
         [ChatCommand(
-            "List all items in your storage. Can filter by tag with the 'tagFilter' option. By default lists items in your backpack" +
-            "but can be disabled with the 'includeBackpack' option.",
-            "my-items",
+            "items",
             ChatAuthorizationLevel.User)
         ]
-        public static void MyItems(User user, string tagFilter = "ALL", bool includeBackpack = true)
+        public static void Items() { }
+
+        [ChatSubCommand(
+            "items",
+            "List all items in your storage. Can filter by tag with the 'tagFilter' option. By default lists items in your backpack" +
+            "but can be disabled with the 'includeBackpack' option.",
+            ChatAuthorizationLevel.User
+        )]
+        public static void List(User user, string tagFilter = "ALL", bool includeBackpack = true)
         {
             if (tagFilter == null) tagFilter = "ALL";
 
@@ -45,8 +51,8 @@ namespace EcoRebalanced
             );
         }
 
-        [ChatCommand("List items needed by queued projects", "shopping-list", ChatAuthorizationLevel.User)]
-        public static void MyNeededItems(User user)
+        [ChatSubCommand("items", "List items needed by queued projects", "needed", ChatAuthorizationLevel.User)]
+        public static void Needed(User user)
         {
             string listContents = "";
             Dictionary<int, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
