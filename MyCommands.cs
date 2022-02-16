@@ -124,5 +124,73 @@ namespace EcoRebalanced
                 true
             ));
         }
+
+        [ChatCommand(
+            "Lists the status of all crafting tables telling you if any are out of fuel, are turned off, are not crafting or if they are missing a module." +
+            "By default only problems are listed. If verbose option is set to true then all tables are listed even if they are fully operational.",
+            "workshop-status",
+            ChatAuthorizationLevel.User)]
+        public static void WorkshopStatus(User user, bool verbose=false)
+        {
+            string content = "";
+            foreach (CraftingComponent table in Utils.getOwnedComponents<CraftingComponent>(user))
+            {
+                bool operational = true;
+                string tableContent = "";
+                tableContent += $"Status of {table.Parent.Name}:\n";
+
+                tableContent += $"  Is {(table.Parent.Enabled ? "enabled" : "disabled")}\n";
+                operational = operational && table.Parent.Enabled;
+
+                OnOffComponent onOff = table.Parent.GetComponent<OnOffComponent>();
+                if (onOff != null)
+                {
+                    tableContent += $"  Is {(onOff.On ? "turned on" : "turned off")}\n";
+                    operational = operational && onOff.On;
+                }
+
+                FuelConsumptionComponent fuelConsumption = table.Parent.GetComponent<FuelConsumptionComponent>();
+                if (fuelConsumption != null)
+                {
+                }
+
+                FuelSupplyComponent fuelSupply = table.Parent.GetComponent<FuelSupplyComponent>();
+                if (fuelSupply != null)
+                {
+                    bool hasFuel = fuelSupply.Energy > 0 || fuelSupply.EnergyInSupply > 0;
+                    operational = operational && hasFuel;
+
+                    tableContent += $"  Table fuel: {fuelSupply.ConsumptionRate} \n";
+                    if (hasFuel)
+                    {
+                        tableContent += $" CraftTime: {table.TotalCraftTime}, Can fuel?: {table.TotalCraftTime.TimeLeft() / fuelSupply.ConsumptionRate < fuelSupply.EnergyInSupply + fuelSupply.Energy}";
+                    }
+                    else
+                        tableContent += $"  Needs fuel.\n";
+                }
+
+                // Power
+                // Pipes, chimney, waste and water
+                // Room requirements
+                // Mechanical power
+                // Module
+                // Connected storage
+
+                if (verbose || !operational)
+                    content += tableContent;
+            }
+
+            string title = "Status of All Tables:";
+            user.MsgLoc($"{title}\n");
+            ChatBase.Send(new ChatBase.InfoPane(
+                title,
+                (content == "" ? "All tables fully operational!" : content),
+                "workshop-status",
+                user,
+                ChatBase.PanelType.InfoPanel,
+                false,
+                true
+            ));
+        }
     }
 }
