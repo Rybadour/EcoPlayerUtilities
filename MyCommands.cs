@@ -8,6 +8,7 @@ using Eco.Gameplay.Property;
 using Eco.Gameplay.Objects;
 using Eco.Gameplay.Components;
 using Eco.Gameplay.Items;
+using Eco.Gameplay.Civics;
 using Eco.EM.Framework.ChatBase;
 
 namespace EcoRebalanced
@@ -24,6 +25,7 @@ namespace EcoRebalanced
             "items",
             "List all items in your storage. Can filter by tag with the 'tagFilter' option. By default lists items in your backpack" +
             "but can be disabled with the 'includeBackpack' option.",
+            "my-items",
             ChatAuthorizationLevel.User
         )]
         public static void List(User user, string tagFilter = "ALL", bool includeBackpack = true)
@@ -52,8 +54,11 @@ namespace EcoRebalanced
         }
 
         [ChatSubCommand("items", "List items needed by queued projects", "needed", ChatAuthorizationLevel.User)]
-        public static void Needed(User user)
+        public static void Needed(User user, User targetUser = null)
         {
+            if (targetUser != null)
+                user = targetUser;
+
             string listContents = "";
             Dictionary<int, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
             Dictionary<string, int> tagsRemaining = new Dictionary<string, int>();
