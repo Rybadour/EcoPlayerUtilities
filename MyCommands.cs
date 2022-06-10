@@ -52,14 +52,14 @@ namespace EcoRebalanced
         [ChatSubCommand("items", "List items needed by queued projects", "needed", ChatAuthorizationLevel.User)]
         public static void Needed(User user, User targetUser = null)
         {
-            if (targetUser != null)
-                user = targetUser;
+            if (targetUser == null)
+                targetUser = user;
 
             string listContents = "";
-            Dictionary<int, int> itemsRemaining = Utils.getAllUserItems(user, "ALL", true);
+            Dictionary<int, int> itemsRemaining = Utils.getAllUserItems(targetUser, "ALL", true);
             Dictionary<string, int> tagsRemaining = new Dictionary<string, int>();
 
-            IEnumerable<WorkOrder> workOrders = Utils.getOwnedComponents<CraftingComponent>(user)
+            IEnumerable<WorkOrder> workOrders = Utils.getOwnedComponents<CraftingComponent>(targetUser)
                 .SelectMany(c => c.WorkOrders.AsEnumerable());
             foreach (WorkOrder wo in workOrders)
             {

@@ -1,0 +1,41 @@
+Installation
+
+Simply extract the folder into your server's mods folder and install the Elixir mods framework: https://eco.mod.io/elixr-mods-em-framework
+
+
+Usage
+
+The mod provides two commands under the "/items" namespace. "/items list" and "/items needed" as described below. Each has been tested for performance and bugs on a real and active server. Also note all items listed are linked correctly so they should show a tooltip when hovered.
+
+
+/items list {tagFilter="ALL"}, {includeBackpack=true}
+
+Displays a list of all the player's items in all their stockpiles, vehicles, personal inventory, fuel slots, etc. Anything considered an inventory owned by the player in Eco.
+- Can optionally filter by tag with the "tagFilter" option. Use "ALL" to match all items.
+- Can exclude items in their player's backpack and hotbar by setting "includeBackpack" to false.
+
+Examples:
+/items list
+List all items in all inventories.
+
+/items list Food
+Will list all items with tag "Food"
+
+/items list ALL, false
+Will list all items excluding the player's backpack and hotbar.
+
+
+/items needed {targetUser}
+
+Calculates all the ingredients needed to complete all the projects the player has queued up. It will use the same logic as the "/items list" command to figure out how much of the ingredients the player already has. It also considers the products of any projects as part of the available inventory. It considers all projects even if the table is not currently connected to storage, has no labor provided or requires a profession the player doesn't have.
+- Can optionally calculate this for another user. This is especially useful if your server uses the Companies mod as this command only works on tables you own. Instead use the name of your companies manager user that was created to see what ingredients your company's projects require.
+
+Examples:
+/items needed
+List all ingredients you need.
+
+/items needed OtherUser
+List all ingredients OtherUser needs.
+
+Imagine you have two projects queued up: 10 Boards and 5 Hewn Logs. When you run /items needed it will calculate that you need 10 Hewn logs to complete the Board project and since you have 5 Hewn Logs queued up it will subtract them from the 10 you need and will list something like:
+Hewn Logs - 5

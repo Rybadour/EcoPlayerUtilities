@@ -31,47 +31,60 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Eco.Core">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Core.dll</HintPath>
+    <Reference Include="Eco.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Core.dll</HintPath>
     </Reference>
     <Reference Include="Eco.EM.Framework">
       <HintPath>..\EcoRebalancedClassLibrary\EcoRebalanced\Eco.EM.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Gameplay">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Gameplay.dll</HintPath>
+    <Reference Include="Eco.Gameplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Gameplay.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.ModKit">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.ModKit.dll</HintPath>
+    <Reference Include="Eco.ModKit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.ModKit.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Mods">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Mods.dll</HintPath>
+    <Reference Include="Eco.Mods, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Mods.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Networking.ENet">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Networking.ENet.dll</HintPath>
+    <Reference Include="Eco.Networking.ENet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Networking.ENet.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Plugins">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Plugins.dll</HintPath>
+    <Reference Include="Eco.Plugins, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Plugins.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Shared">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Shared.dll</HintPath>
+    <Reference Include="Eco.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Shared.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Simulation">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Simulation.dll</HintPath>
+    <Reference Include="Eco.Simulation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Simulation.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.Stats">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.Stats.dll</HintPath>
+    <Reference Include="Eco.Stats, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.Stats.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.WebServer">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.WebServer.dll</HintPath>
+    <Reference Include="Eco.WebServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.WebServer.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.World">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.World.dll</HintPath>
+    <Reference Include="Eco.World, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.World.dll</HintPath>
     </Reference>
-    <Reference Include="Eco.WorldGenerator">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\Eco.WorldGenerator.dll</HintPath>
+    <Reference Include="Eco.WorldGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\Eco.WorldGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="EcoServer">
-      <HintPath>C:\Users\Ryan\Downloads\ReferenceAssemblies\EcoServer.dll</HintPath>
+    <Reference Include="EcoServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Files\EcoModkit_9.5\ReferenceAssemblies\EcoServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
